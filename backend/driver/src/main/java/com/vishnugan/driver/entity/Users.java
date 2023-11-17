@@ -18,10 +18,10 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "users",
+@Table(name = "drivers",
         uniqueConstraints = {
                 @UniqueConstraint(
-                        name = "users_email_unique",
+                        name = "drivers_email_unique",
                         columnNames = "email"
                 )
         }
@@ -31,7 +31,7 @@ public class Users implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(updatable = false)
-    private Long userid;
+    private Long driverid;
 
     @Column(columnDefinition = "Text", nullable = false)
     private String firstName;

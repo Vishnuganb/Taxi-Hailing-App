@@ -11,7 +11,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 public class UsersDTO {
 
-    private Long userid;
+    private Long driverid;
     private String firstName;
     private String lastName;
     private String address;

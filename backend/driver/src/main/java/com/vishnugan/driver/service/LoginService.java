@@ -64,7 +64,7 @@ public class LoginService {
             if (passwordEncoder.matches(userRequest.getPassword(), Driver.getPassword())) {
                 var jwtToken = jwtService.generateToken(Driver);
                 UserToken userToken = new UserToken(
-                        Driver.getUserid(),
+                        Driver.getDriverid(),
                         Driver.getEmail(),
                         Driver.getRole().name(),
                         Driver.getFirstName(),
@@ -91,7 +91,7 @@ public class LoginService {
     public UsersDTO getUserById(Long id) {
         var user = usersRepository.findById(id).get();
         return new UsersDTO(
-                user.getUserid(),
+                user.getDriverid(),
                 user.getFirstName(),
                 user.getLastName(),
                 user.getAddress(),
@@ -105,10 +105,10 @@ public class LoginService {
         );
     }
 
-    public Users updateUser(Long userId, String firstName, String lastName, String address,
+    public Users updateUser(Long driverId, String firstName, String lastName, String address,
                            String phone, String password, LocalDate dob, String gender) {
         try {
-            Optional<Users> user = usersRepository.findById(userId);
+            Optional<Users> user = usersRepository.findById(driverId);
 
             if (user.isEmpty()){
                 throw new Exception("User not found");

@@ -10,7 +10,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserToken {
-    private Long userid;
+    private Long driverid;
     private String email;
     private String role;
     private String firstName;

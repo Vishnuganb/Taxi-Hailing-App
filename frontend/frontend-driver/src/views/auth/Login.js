@@ -86,7 +86,7 @@ function Login() {
                     if (res.type === "OK") {
                         toast.success(res.message);
                         sessionStorage.setItem("token", res.token);
-                        sessionStorage.setItem("userid", res.payload.userid);
+                        sessionStorage.setItem("driverid", res.payload.driverid);
                         
                         if(res.payload.role === "DRIVER"){
                             navigate('/driver');

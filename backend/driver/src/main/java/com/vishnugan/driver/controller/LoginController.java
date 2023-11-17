@@ -36,7 +36,7 @@ public class LoginController {
 
     @PutMapping("/updateUser")
     public ResponseEntity<ResponseMessage> updateUser(
-            @RequestParam(value = "userId") Long userId,
+            @RequestParam(value = "driverId") Long userId,
             @RequestParam(value = "firstName", required = false) String firstName,
             @RequestParam(value = "lastName",required = false) String lastName,
             @RequestParam(value = "address",required = false) String address,

@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom'; 
 
-const serverLink = 'http://localhost:8080/auth';
+const serverLink = 'http://localhost:8002/auth';
 
 class UserService{
 

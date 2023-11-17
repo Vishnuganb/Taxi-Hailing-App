@@ -4,11 +4,15 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Nav, NavDropdown, Navbar, Container } from "react-bootstrap";
 import userService from "../../services/userService";
+import profileIcon from '../../assets/images/user.jpg';
+import PassengerEditProfile from '../../views/Passenger/PassengerEditProfile';
 
 
 export default function PassengerNavbar(props) {
 
     let navigate = useNavigate();
+
+    const [showEditProfile, setShowEditProfile] = useState(false);
 
     useEffect(() => {
         const user = userService.getUser();
@@ -35,8 +39,12 @@ export default function PassengerNavbar(props) {
                 <Nav>
                     <Nav.Link as={Link} to='/hire' className="fw-bold navLink">Hire</Nav.Link>
                     <NavDropdown title={props.user.username} className='fw-bold' id="basic-nav-dropdown">
+                        <NavDropdown.Item onClick={() => setShowEditProfile(true)} className="fw-bold no-hover">Edit Profile</NavDropdown.Item>
+                        <NavDropdown.Divider />
                         <NavDropdown.Item as={Link} onClick={handleLogOut} className="fw-bold no-hover">Logout</NavDropdown.Item>
                     </NavDropdown>
+                    <PassengerEditProfile show={showEditProfile} onHide={() => setShowEditProfile(false)} />
+                    <img src={profileIcon} alt="profile" className="profile-icon" style={{width:"40px", height:"40px", borderRadius:"100%"}}/>
                 </Nav>
             </Navbar.Collapse>
         </Container>

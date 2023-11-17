@@ -6,7 +6,7 @@ import PassengerLayout from './layouts/PassengerLayout';
 import Home from './views/public/Home';
 import Login from './views/auth/Login';
 import PassengerRegister from './views/auth/PassengerRegister';
-import PassengerHome from './views/Passanger/PassengerHome';
+import PassengerHome from './views/Passenger/PassengerHome';
 
 function App() {
   return (

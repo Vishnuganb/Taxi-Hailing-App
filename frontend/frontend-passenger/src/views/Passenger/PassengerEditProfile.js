@@ -9,9 +9,9 @@ import axios from 'axios';
 import bcrypt from 'bcryptjs';
 import { Alert } from 'react-bootstrap';
 
-const serverLink = 'http://localhost:8002';
+const serverLink = 'http://localhost:8001';
 
-const DriverEditProfile = (props) => {
+const PassengerEditProfile = (props) => {
 
     const [data, setdata] = useState({
         email: '',
@@ -21,8 +21,6 @@ const DriverEditProfile = (props) => {
         address: '',
         password: '',
         newPassword: '',
-        dob:'',
-        gender:'',
         errorMessage: 'Password requires to have at least one lowercase, one uppercase, one number, one symbol, and be a minimum of 8 characters in length',
         emailStatus: false,
         passwordType: 'password',
@@ -36,7 +34,6 @@ const DriverEditProfile = (props) => {
         passwordErrorMessage: '',
         newPasswordErrorMessage: '',
         showMore: false,
-        dobAgeErrorMessage: '',
     });
 
     const [userDetail, setUserDetail] = useState([]);
@@ -55,8 +52,6 @@ const DriverEditProfile = (props) => {
                     lastName: response.data.lastName,
                     contactNumber: response.data.phone,
                     address: response.data.address,
-                    dob: response.data.dob,
-                    gender:response.data.gender,
                 });
             }
         } catch (error) {
@@ -108,25 +103,7 @@ const DriverEditProfile = (props) => {
             isError = true;
             console.log("image changed9");
             setdata({ ...data, contactNumberErrorMessage: "Invalid contact number" });
-        } else if(data.dobAgeError !== ""){
-
-            const today = new Date();
-            const birthDate = new Date(data.dob);
-            const age = today.getFullYear() - birthDate.getFullYear();
-            const monthDiff = today.getMonth() - birthDate.getMonth();
-        
-            if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
-                age--;
-            }
-        
-            if (age < 18) {
-                isError = true;
-                setdata({ ...data, dobAgeErrorMessage: "You must be 18 years or older to register" });
-            } else {
-                setdata({ ...data, dobAgeErrorMessage: "" });
-            }
-
-        }else if (data.newPassword.length > 0 || data.password.length > 0) {
+        } else if (data.newPassword.length > 0 || data.password.length > 0) {
             try {
                 const passwordMatches = await bcrypt.compare(data.password, userDetail.password);
                 console.log(passwordMatches);
@@ -173,14 +150,6 @@ const DriverEditProfile = (props) => {
                 formData.append("address", data.address);
             }
 
-            if(data.dob !== userDetail.dob){
-                formData.append("dob",data.dob);
-            }
-
-            if(data.gender !== userDetail.gender){
-                formData.append("gender",data.gender);
-            }
-
             if (bcrypt.compare(data.password, userDetail.password)) {
                 formData.append("password", data.newPassword);
             }
@@ -216,7 +185,6 @@ const DriverEditProfile = (props) => {
             contactNumberErrorMessage: "",
             addressErrorMessage: "",
             passwordErrorMessage: "",
-            dobAgeErrorMessage: "",
         });
         props.onHide(true);
     }
@@ -287,34 +255,6 @@ const DriverEditProfile = (props) => {
                                         required
                                     />
                                     {data.contactNumberErrorMessage && <p className="text-danger p-0 m-0">{data.contactNumberErrorMessage}</p>}
-                                </div>
-                            </div>
-
-                            <div className="justify-content-between mb-3 d-flex">
-                                <div className='me-0 col-sm-6'>
-                                    <p className="mb-0 align-items-end">Date of Birth</p>
-                                    <input
-                                        type="date"
-                                        className="form-control"
-                                        value={data.dob}
-                                        onChange={(e) => {
-                                            setdata({ ...data, dob: e.target.value });
-                                        }}
-                                    />
-                                    {data.dobAgeErrorMessage && <p className="text-danger p-0 m-0">{data.dobAgeErrorMessage}</p>}
-                                </div>
-
-                                <div className='col-sm-5'>
-                                    <p className="mb-0">Gender</p>
-                                    <select
-                                        className="form-select"
-                                        value={data.gender}
-                                        onChange={(e) => setdata({ ...data, gender: e.target.value })}
-                                    >
-                                        <option value="male">Male</option>
-                                        <option value="female">Female</option>
-                                        <option value="other">Other</option>
-                                    </select>
                                 </div>
                             </div>
 
@@ -433,4 +373,4 @@ const DriverEditProfile = (props) => {
     );
 };
 
-export default DriverEditProfile;
+export default PassengerEditProfile;

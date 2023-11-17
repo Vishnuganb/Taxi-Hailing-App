@@ -5,6 +5,7 @@ import com.vishnugan.passenger.auth.ResType;
 import com.vishnugan.passenger.auth.UserRequest;
 import com.vishnugan.passenger.auth.UserToken;
 import com.vishnugan.passenger.config.JwtService;
+import com.vishnugan.passenger.dto.UsersDTO;
 import com.vishnugan.passenger.entity.Role;
 import com.vishnugan.passenger.entity.Users;
 import com.vishnugan.passenger.repo.UsersRepository;
@@ -12,6 +13,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -77,6 +81,62 @@ public class LoginService {
             }
         }
 
+    }
+
+    public UsersDTO getUserById(Long id) {
+        var user = usersRepository.findById(id).get();
+        return new UsersDTO(
+                user.getUserid(),
+                user.getFirstName(),
+                user.getLastName(),
+                user.getAddress(),
+                user.getPhone(),
+                user.getEmail(),
+                user.getRegisdate(),
+                user.getPassword(),
+                user.getRole().name()
+        );
+    }
+
+    public Users updateUser(Long userId, String firstName, String lastName, String address,
+                            String phone, String password) {
+        try {
+            Optional<Users> user = usersRepository.findById(userId);
+
+            if (user.isEmpty()){
+                throw new Exception("User not found");
+            }
+
+            Users userdata = user.get();
+
+            if (firstName != null){
+                userdata.setFirstName(firstName);
+            }
+
+            if (lastName != null){
+                userdata.setLastName(lastName);
+            }
+
+            if (address != null){
+                userdata.setAddress(address);
+            }
+
+            if (phone != null){
+                userdata.setPhone(phone);
+            }
+
+            if (password != null){
+                userdata.setPassword(passwordEncoder.encode(password));
+            }
+
+            usersRepository.save(userdata);
+
+            return userdata;
+
+        }catch (Exception e){
+            System.out.println(e.getMessage());
+            return null;
+        }
     }
 
 }

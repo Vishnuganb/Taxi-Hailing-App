@@ -15,6 +15,7 @@ const DriverEditVehicle = (props) => {
         vehicleNumber: '',
         vehicleType: '',
         file: null,
+        fileName: '',
         vehicleNumberErrorMessage: '',
         vehicleTypeErrorMessage: '',
         fileErrorMessage: '',
@@ -22,14 +23,21 @@ const DriverEditVehicle = (props) => {
     }); 
 
     const [userDetail, setUserDetail] = useState([]);
-    const response = sessionStorage.getItem('userid');
+    const response = sessionStorage.getItem('driverid');
     const userData = JSON.parse(response);
 
     const fetchUserData = async () => {
         try {
-            const response = await axios.get(serverLink + '/auth/getVehicleUserById/' + userData);
+            const response = await axios.get(serverLink + '/auth/getVehicleById/' + userData);
             if (response.data) {
                 setUserDetail(response.data);
+                setdata({
+                    ...data,
+                    vehicleNumber: response.data.vehicleNumber,
+                    vehicleType: response.data.vehicleType,
+                    fileName: response.data.fileName,
+                });
+                console.log(response);
             }
         } catch (error) {
             console.error('Error fetching user data:', error);
@@ -52,7 +60,7 @@ const DriverEditVehicle = (props) => {
             isError = true;
             console.log("image changed2");
             setdata({ ...data, vehicleTypeErrorMessage: "Vehicle type is required" });
-        }  else if (data.file === null) {
+        }  else if (data.fileName === null) {
             isError = true;
             console.log("image changed8");
             setdata({ ...data, fileErrorMessage: "License is required" });
@@ -77,17 +85,27 @@ const DriverEditVehicle = (props) => {
                 formData.append("vehicleType", data.vehicleType);
             }
 
-            if (data.file !== userDetail.file) {
+            if (data.file !== null) {
                 formData.append("file", data.file);
             }
 
-            formData.append("driverId", userDetail.driverid);
+            formData.append("driverId", userData);
+
+            // loop the formData to see the data
+            for (var pair of formData.entries()) {
+                if (pair[0] === 'file') {
+                    console.log(pair[0] + ', ' + pair[1].name + ', ' + pair[1].size + ', ' + pair[1].type);
+                } else {
+                    console.log(pair[0] + ', ' + pair[1]);
+                }
+            }
+            
 
             axios.put(serverLink + '/auth/updateVehicle', formData).then(
 
                 (response) => {
 
-                    window.location.reload();
+                    // window.location.reload();
                     console.log(response.data);
 
                 }
@@ -122,7 +140,7 @@ const DriverEditVehicle = (props) => {
                     <Modal.Title id="contained-modal-title-vcenter">Vehicle Details</Modal.Title>
                 </Modal.Header>
 
-                <Modal.Body className="d-flex">
+                <Modal.Body>
                     <div>
                         <Form className="my-2 mx-4">
 
@@ -171,11 +189,16 @@ const DriverEditVehicle = (props) => {
                                         type="file"
                                         className="form-control"
                                         onChange={(e) => {
-                                            setdata({ ...data, file: e.target.files[0] });
+                                            setdata({
+                                                ...data,
+                                                file: e.target.files[0],
+                                                fileName: e.target.files[0] ? e.target.files[0].name : '', // Update fileName when a file is selected
+                                            });
                                         }}
                                         required
                                     />
                                     {data.fileErrorMessage && <p className="text-danger p-0 m-0">{data.fileErrorMessage}</p>}
+                                    {data.fileName && <p className="mt-1">{data.fileName}</p>}
                                 </div>
                             </div>
                         </Form>

@@ -37,7 +37,7 @@ export default function PassengerNavbar(props) {
             <Navbar.Toggle aria-controls="basic-navbar-nav" />
             <Navbar.Collapse id="basic-navbar-nav" className='justify-content-end'>
                 <Nav>
-                    <Nav.Link as={Link} to='/hire' className="fw-bold navLink">Hire</Nav.Link>
+                    <Nav.Link as={Link} to='/passenger/ride' className="fw-bold navLink">Ride</Nav.Link>
                     <NavDropdown title={props.user.username} className='fw-bold' id="basic-nav-dropdown">
                         <NavDropdown.Item onClick={() => setShowEditProfile(true)} className="fw-bold no-hover">Edit Profile</NavDropdown.Item>
                         <NavDropdown.Divider />

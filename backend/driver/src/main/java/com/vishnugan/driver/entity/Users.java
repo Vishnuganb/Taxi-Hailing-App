@@ -1,5 +1,6 @@
 package com.vishnugan.driver.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -67,6 +68,28 @@ public class Users implements UserDetails {
 
     @Enumerated (EnumType.STRING)
     private Role role;
+
+    @OneToOne(mappedBy = "users", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnoreProperties("users")
+    private Vehicle vehicle;
+
+    @Override
+    public String toString() {
+        return "Users{" +
+                "driverid=" + driverid +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", address='" + address + '\'' +
+                ", phone='" + phone + '\'' +
+                ", email='" + email + '\'' +
+                ", gender='" + gender + '\'' +
+                ", dob=" + (dob != null ? dob.toString() : "null") +
+                ", password='" + password + '\'' +
+                ", regisdate=" + (regisdate != null ? regisdate.toString() : "null") +
+                ", role=" + role +
+                ", vehicle=" + (vehicle != null ? vehicle.getId() : "null") + // assuming Vehicle has an 'id' field
+                '}';
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

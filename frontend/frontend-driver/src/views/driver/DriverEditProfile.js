@@ -40,7 +40,7 @@ const DriverEditProfile = (props) => {
     });
 
     const [userDetail, setUserDetail] = useState([]);
-    const response = sessionStorage.getItem('userid');
+    const response = sessionStorage.getItem('driverid');
     const userData = JSON.parse(response);
 
     const fetchUserData = async () => {

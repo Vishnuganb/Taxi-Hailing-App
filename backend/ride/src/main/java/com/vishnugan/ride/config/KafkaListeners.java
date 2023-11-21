@@ -1,4 +1,4 @@
-package com.vishnugan.driver.config;
+package com.vishnugan.ride.config;
 
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;

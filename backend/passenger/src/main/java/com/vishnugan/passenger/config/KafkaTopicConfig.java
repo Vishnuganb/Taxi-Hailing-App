@@ -1,4 +1,4 @@
-package com.vishnugan.driver.config;
+package com.vishnugan.passenger.config;
 
 import org.apache.kafka.clients.admin.NewTopic;
 import org.springframework.context.annotation.Bean;

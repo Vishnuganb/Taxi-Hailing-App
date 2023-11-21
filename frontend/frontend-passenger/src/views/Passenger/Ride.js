@@ -84,8 +84,8 @@ function Ride() {
       setLoading(true);
 
       const payload = {
-        from: rideForm.from,
-        to: rideForm.to,
+        pickupLocation: rideForm.from,
+        dropLocation: rideForm.to,
         vehicleType: rideForm.vehicleType,
       };
 
@@ -226,6 +226,7 @@ function Ride() {
                 <div style={{ position: "relative" }}>
                   <CFormSelect
                     label="Vehicle Type"
+                    name="vehicleType"
                     onChange={onUpdateInput}
                     value={rideForm.vehicleType}
                     feedback={rideFormErrors.vehicleTypeError}

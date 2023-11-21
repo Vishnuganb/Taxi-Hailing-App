@@ -4,6 +4,7 @@ server:
     include-binding-errors: always
   port: 8003
 
+
 spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/RideTaxi
@@ -24,4 +25,3 @@ spring:
 
   kafka:
     bootstrap-servers: localhost:9092
-

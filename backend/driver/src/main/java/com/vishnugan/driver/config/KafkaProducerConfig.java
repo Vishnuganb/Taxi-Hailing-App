@@ -19,8 +19,7 @@ public class KafkaProducerConfig {
     private String bootstrapServers;
 
     public Map<String, Object> producerConfig() {
-
-        Map<String,Object> props = new HashMap<>();
+        Map<String, Object> props = new HashMap<>();
         props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
         props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
@@ -38,5 +37,5 @@ public class KafkaProducerConfig {
     ) {
         return new KafkaTemplate<>(producerFactory);
     }
-
 }
+

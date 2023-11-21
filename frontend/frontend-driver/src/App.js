@@ -7,6 +7,7 @@ import Home from './views/public/Home';
 import Login from './views/auth/Login';
 import DriverRegister from './views/auth/DriverRegister';
 import DriverHome from './views/driver/DriverHome';
+import RideDetails from './views/driver/RideDetails';
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
           <Route path='/login' element={<MainLayout public={true} page={<Login/>}/> }/>
           <Route path='/driverRegister' element={<MainLayout public={true} page={<DriverRegister/>}/> }/>
           <Route path='/driver' element={<DriverLayout public={false} page={<DriverHome/>}/>} />
+          <Route path='/driver/ride' element={<DriverLayout public={false} page={<RideDetails/>}/>} />
         </Routes>
       </Router>
   );

@@ -9,11 +9,14 @@ import org.springframework.kafka.config.TopicBuilder;
 public class KafkaTopicConfig {
 
     @Bean
-    public NewTopic rideTopic() {
-
-        return TopicBuilder.name("ride-requests")
+    public NewTopic acceptedRideTopic() {
+        return TopicBuilder.name("passenger-accepted-ride")
                 .build();
-
     }
 
+    @Bean
+    public NewTopic finishedRideTopic() {
+        return TopicBuilder.name("passenger-finished-ride")
+                .build();
+    }
 }

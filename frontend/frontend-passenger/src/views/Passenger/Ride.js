@@ -54,41 +54,41 @@ function Ride() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
     let fromError = "";
     let toError = "";
     let vehicleTypeError = "";
-
+  
     if (!v_required(rideForm.from)) {
       fromError = "Pickup location can not be empty.";
     }
-
+  
     if (!v_required(rideForm.to)) {
       toError = "Drop location can not be empty.";
     }
-
+  
     if (!v_required(rideForm.vehicleType)) {
       vehicleTypeError = "Vehicle type can not be empty.";
     }
-
+  
     // If errors exist, show errors
     setRideFormErrors({
       fromError,
       toError,
       vehicleTypeError,
     });
-
+  
     // If no errors exist, send to the server
     if (!(fromError || toError || vehicleTypeError)) {
       // Sending to the server
       setLoading(true);
-
+  
       const payload = {
         pickupLocation: rideForm.from,
         dropLocation: rideForm.to,
         vehicleType: rideForm.vehicleType,
       };
-
+  
       rideService.findDriver(payload).then(
         (res) => {
           console.log("Response", res);
@@ -98,7 +98,7 @@ function Ride() {
           } else if (res.type === "BAD") {
             toast.error(res.message);
           }
-
+  
           setLoading(false);
         },
         (error) => {

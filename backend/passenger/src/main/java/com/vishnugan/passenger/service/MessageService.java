@@ -9,9 +9,9 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class MessageService {
 
-    private KafkaTemplate<String, String> kafkaTemplate;
+    private final KafkaTemplate<String, String> kafkaTemplate;
 
     public void publish(MessageRequest messageRequest) {
-        kafkaTemplate.send("vishnugan", messageRequest.message());
+        kafkaTemplate.send("ride-requests", messageRequest.message());
     }
 }

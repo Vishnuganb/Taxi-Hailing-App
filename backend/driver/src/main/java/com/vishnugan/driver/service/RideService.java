@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class RideService {
@@ -39,7 +41,7 @@ public class RideService {
 
     }
 
-    public Ride getAllRideDetails() {
-        return rideRepository.findAll().get(0);
+    public List<Ride> getAllRideDetails() {
+        return rideRepository.findAll();
     }
 }

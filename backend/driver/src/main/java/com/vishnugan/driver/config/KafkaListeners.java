@@ -1,5 +1,7 @@
 package com.vishnugan.driver.config;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vishnugan.driver.entity.Ride;
 import com.vishnugan.driver.repo.RideRepository;
 import com.vishnugan.driver.service.RideService;
@@ -24,23 +26,38 @@ public class KafkaListeners {
 
     @KafkaListener(
             topics = "passenger-requested-ride",
-            groupId = "passenger-requested-ride-group-id"
+            groupId = "passenger-requested-ride-group-id-2"
     )
     void listener(
-            @Payload PassengerRequestedRideEventDTO passengerRequestedRideEventDTO,
-            @Headers MessageHeaders headers
+           @Payload String data,
+           @Headers MessageHeaders headers
     ) {
+        System.out.println("Data received from Kafka: " + data);
+        System.out.println("Headers received from Kafka: " + headers);
+
+        // assign data to dto
+        PassengerRequestedRideEventDTO passengerRequestedRideEventDTO = parseJsonToDto(data);
+        System.out.println("DTO: " + passengerRequestedRideEventDTO);
 
         // Process the ride request
         var requestStatus = processRideRequest(passengerRequestedRideEventDTO);
 
         if (requestStatus) {
-            // Store the ride details in the database
             storeRideDetails(passengerRequestedRideEventDTO);
         }
+//
+//        // Respond back to Passenger Microservice or update ride status.
+//        sendResponseToPassengerMicroservice(passengerRequestedRideEventDTO.getRideId());
+    }
 
-        // Respond back to Passenger Microservice or update ride status.
-        sendResponseToPassengerMicroservice(passengerRequestedRideEventDTO.getRideId());
+    private PassengerRequestedRideEventDTO parseJsonToDto(String jsonString) {
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            return objectMapper.readValue(jsonString, PassengerRequestedRideEventDTO.class);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     private Boolean processRideRequest(PassengerRequestedRideEventDTO rideRequest) {

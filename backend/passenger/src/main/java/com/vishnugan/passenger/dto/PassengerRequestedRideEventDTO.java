@@ -1,4 +1,4 @@
-package com.vishnugan.ride.dto;
+package com.vishnugan.passenger.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

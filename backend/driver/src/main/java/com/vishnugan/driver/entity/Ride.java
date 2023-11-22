@@ -1,10 +1,10 @@
 package com.vishnugan.driver.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Data
 @NoArgsConstructor
@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @Entity
 @Table(name="ride")
+@ToString(includeFieldNames = true)
 public class Ride {
 
     @Id

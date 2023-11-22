@@ -13,6 +13,10 @@ export default function PassengerNavbar(props) {
 
     let navigate = useNavigate();
 
+    const handleClick = () => {
+        navigate('/driver');
+    };
+
     const [showEditProfile, setShowEditProfile] = useState(false);
     const [showEditVehicle, setShowEditVehicle] = useState(false);
 
@@ -49,7 +53,8 @@ export default function PassengerNavbar(props) {
                     </NavDropdown>
                     <DriverEditProfile show={showEditProfile} onHide={() => setShowEditProfile(false)} />
                     <DriverEditVehicle show={showEditVehicle} onHide={() => setShowEditVehicle(false)} />
-                    <img src={profileIcon} alt="profile" className="profile-icon" style={{width:"40px", height:"40px", borderRadius:"100%"}}/>
+                    <img src={profileIcon} alt="profile" as={Link} onClick={handleClick} className="profile-icon" 
+                        style={{ width: "40px", height: "40px", borderRadius: "100%" }} />
                 </Nav>
             </Navbar.Collapse>
         </Container>

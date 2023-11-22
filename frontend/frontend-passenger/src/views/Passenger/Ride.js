@@ -24,6 +24,9 @@ function Ride() {
   const [loading, setLoading] = useState(false);
   let navigate = useNavigate();
 
+  const response = sessionStorage.getItem('userid');
+  const userData = JSON.parse(response);
+
   // Form data
   const [rideForm, setRideForm] = useState({
     from: "",
@@ -52,6 +55,17 @@ function Ride() {
     }));
   };
 
+  const filterSuggestions = (suggestions) => {
+    return suggestions.filter((suggestion) => {
+      const placeIds = suggestion.placeId;
+      const description = suggestion.description.toLowerCase();
+      const isSriLankaAddress = description.includes("sri lanka");
+  
+      return placeIds && isSriLankaAddress;
+    });
+  };
+   
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
   
@@ -87,6 +101,7 @@ function Ride() {
         pickupLocation: rideForm.from,
         dropLocation: rideForm.to,
         vehicleType: rideForm.vehicleType,
+        passengerId: userData
       };
   
       rideService.findDriver(payload).then(
@@ -120,7 +135,7 @@ function Ride() {
       style={{
         backgroundImage: `url(${image})`,
         backgroundSize: "cover",
-        backgroundPosition: "center", // Center the image
+        backgroundPosition: "center",
         backgroundRepeat: "no-repeat",
         width: "100%",
         height: "100vh",
@@ -129,8 +144,8 @@ function Ride() {
         overflowY: "hidden",
         scrollbarWidth: "0",
         msOverflowStyle: "none",
-        alignItems: "center", // Center vertically
-        justifyContent: "center", // Center horizontally
+        alignItems: "center", 
+        justifyContent: "center", 
       }}
     >
       <CCol md={5}>
@@ -145,42 +160,40 @@ function Ride() {
             </p>
             <CForm className="row g-3">
             <CCol md={12}>
-                <PlacesAutocomplete
-                  value={rideForm.from}
-                  onChange={(value) =>
-                    onUpdateInput({ target: { name: "from", value } })
-                  }
-                  onSelect={(address) => handleSelect(address, "from")}
-                >
-                  {({ getInputProps, suggestions, getSuggestionItemProps, loading }) => (
-                    <div className="autocomplete-container">
-                      <CFormInput
-                        type="text"
-                        id="validationServer01"
-                        name="from"
-                        label="Pickup Location"
-                        {...getInputProps({
-                          placeholder: "Enter Pickup Location",
-                        })}
-                        feedback={rideFormErrors.fromError}
-                        invalid={rideFormErrors.fromError ? true : false}
-                      />
-                      <div className="suggestions-container">
-                        {loading && <div>Loading...</div>}
-                        {suggestions.map((suggestion) => (
-                          <div
-                            {...getSuggestionItemProps(suggestion)}
-                            key={suggestion.placeId}
-                            className="suggestion-item"
-                          >
-                            {suggestion.description}
-                          </div>
-                        ))}
+              <PlacesAutocomplete
+                value={rideForm.from}
+                onChange={(value) => onUpdateInput({ target: { name: "from", value } })}
+                onSelect={(address) => handleSelect(address, "from")}
+              >
+              {({ getInputProps, suggestions, getSuggestionItemProps, loading }) => (
+                <div className="autocomplete-container">
+                  <CFormInput
+                    type="text"
+                    id="validationServer01"
+                    name="from"
+                    label="Pickup Location"
+                    {...getInputProps({
+                      placeholder: "Enter Pickup Location",
+                    })}
+                    feedback={rideFormErrors.fromError}
+                    invalid={rideFormErrors.fromError ? true : false}
+                  />
+                <div className="suggestions-container">
+                    {loading && <div>Loading...</div>}
+                    {filterSuggestions(suggestions).map((suggestion) => (
+                      <div
+                        {...getSuggestionItemProps(suggestion)}
+                        key={suggestion.placeId}
+                        className="suggestion-item"
+                      >
+                        {suggestion.description}
                       </div>
-                    </div>
-                  )}
-                </PlacesAutocomplete>
-              </CCol>
+                    ))}
+                </div>
+              </div>
+            )}
+          </PlacesAutocomplete>
+        </CCol>
 
               <CCol md={12}>
                 <div style={{ position: "relative" }}>
@@ -206,7 +219,7 @@ function Ride() {
                         />
                         <div className="suggestions-container">
                           {loading && <div>Loading...</div>}
-                          {suggestions.map((suggestion) => (
+                          {filterSuggestions(suggestions).map((suggestion) => (
                             <div
                               {...getSuggestionItemProps(suggestion)}
                               key={suggestion.placeId}

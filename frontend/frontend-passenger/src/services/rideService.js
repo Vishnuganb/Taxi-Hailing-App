@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'http://localhost:8003';
+const API_BASE_URL = 'http://localhost:8001/auth';
 
 const rideService = {
     findDriver: async (payload) => {

@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 public class Ride {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long rideId;
 
     @NotBlank(message = "Pickup location can not be empty.")
     private String pickupLocation;
@@ -24,6 +24,10 @@ public class Ride {
 
     @NotBlank(message = "Vehicle type can not be empty.")
     private String vehicleType;
+
+    private Long passengerId;
+
+    private Long driverId;
 
     private String status;
 

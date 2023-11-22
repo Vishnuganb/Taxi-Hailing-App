@@ -13,12 +13,4 @@ public class DriverApplication {
 		SpringApplication.run(DriverApplication.class, args);
 	}
 
-	@Bean
-	CommandLineRunner commandLineRunner(KafkaTemplate<String, String> kafkaTemplate) {
-		return args -> {
-			for (int i = 0; i < 100; i++)
-				kafkaTemplate.send("ride-requests", "Hello World :)" + i);
-		};
-	}
-
 }

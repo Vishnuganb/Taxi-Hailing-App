@@ -1,6 +1,9 @@
-package com.vishnugan.driver.entity;
+package com.vishnugan.passenger.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,22 +14,15 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name="rides")
+@Table(name="ride")
 public class Ride {
 
     @Id
-    @GeneratedValue(generator = "increment")
+    @GeneratedValue
     private Long rideId;
     private String pickupLocation;
     private String dropLocation;
     private String vehicleType;
     private Long passengerId;
     private String status;
-    private Long driverId;
-
-    @PrePersist
-    public void prePersist() {
-        this.status = "pending";
-    }
-
 }

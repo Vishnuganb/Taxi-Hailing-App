@@ -5,6 +5,8 @@ import { faSearch } from '@fortawesome/free-solid-svg-icons';
 import styled from 'styled-components';
 import axios from 'axios';
 import backgroundImage from './../../assets/images/home12.png';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const StyledTabs = styled(Tabs)`
   & .nav-link.active {
@@ -28,7 +30,8 @@ function RideDetails() {
     filteredRides: [],
     displayedRides: [],
     selectedRide: null,
-    cardsPerPage: 3,
+    selectedFinsihedRide: null,
+    cardsPerPage: 6,
     showAcceptConfirmation: false,
     showFinishedConfirmation: false,
     enable: true,
@@ -37,11 +40,15 @@ function RideDetails() {
     finishedRides: [],
   });
 
+  const response = sessionStorage.getItem('driverid');
+  const userData = JSON.parse(response);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(serverLink + '/auth/getAllRideDetails');
+        const response = await axios.get(serverLink + '/auth/getAllRideDetails/'+ userData);
         const detail = response.data;
+        console.log(detail);
         setData({
           ...data,
           RidesData: detail,
@@ -124,13 +131,16 @@ function RideDetails() {
 
   const handleAcceptRide = (rideId) => {
     const formData = new FormData();
-    formData.append('status', 'accepted');
     formData.append('rideId', rideId);
+    formData.append('driverId', userData);
+    
+    console.log(userData);
 
     axios
       .put(serverLink + '/auth/updateRideAcceptStatus', formData)
       .then((response) => {
         console.log(response.data);
+        toast.success('Ride Accepted Successfully');
         window.location.reload();
       })
       .catch(() => {
@@ -140,13 +150,14 @@ function RideDetails() {
 
   const handleFinishRide = (rideId) => {
     const formData = new FormData();
-    formData.append('status', 'finished');
     formData.append('rideId', rideId);
+    formData.append('driverId', userData); 
 
     axios
       .put(serverLink + '/auth/updateRideFinishStatus', formData)
       .then((response) => {
         console.log(response.data);
+        toast.success('Ride Finished Successfully');
         window.location.reload();
       })
       .catch(() => {
@@ -162,7 +173,7 @@ function RideDetails() {
         className="m-3"
       >
         <Tab eventKey="pending" title="Pending"/>
-        <Tab eventKey="finished" title="Finished" />
+        <Tab eventKey="finished" title="Accepted / Finished" />
       </StyledTabs>
 
       <section
@@ -207,12 +218,12 @@ function RideDetails() {
           {data.displayedRides &&
             data.displayedRides.map((Ride) => {
               return (
-                <Card key={Ride.id} className="m-3">
+                <Card key={Ride.rideId} className="m-3">
                   <Card.Body className="d-flex flex-column align-items-center">
                     <div className="d-flex flex-column justify-content-center text-center">
                       <p className="card-text fw-bold d-none d-md-block">pickup Location: {Ride.pickupLocation}</p>
                       <p className="card-text fw-bold d-none d-md-block align-self-start">Drop Location: {Ride.dropLocation}</p>
-                      {data.activeTab === 'pending' && (
+                      {data.activeTab === 'pending' && Ride.status === 'pending' && (
                         <>
                           <button
                             className="btn m-1"
@@ -221,15 +232,20 @@ function RideDetails() {
                           >
                             Accept
                           </button>
-                          <button
-                            className="btn m-1"
-                            style={{ backgroundColor: '#000', color: '#fff' }}
-                            onClick={() => handleFinishRide(Ride.id)}
-                          >
-                            Finish
-                          </button>
                         </>
-                      )}
+                        )}
+                        {data.activeTab === 'finished' && Ride.status === 'accepted' && (
+                            <>
+                                <button
+                                    className="btn m-1"
+                                    style={{ backgroundColor: '#000', color: '#fff' }}
+                                    onClick={() => setData({ ...data, showFinishedConfirmation: true, selectedFinsihedRide: Ride })}
+                                >
+                                    Finish
+                                </button>
+                            </>
+                        )}
+
                     </div>
                   </Card.Body>
                 </Card>
@@ -271,6 +287,31 @@ function RideDetails() {
             No
           </Button>
           <Button className='btn-effect' onClick={() => handleAcceptRide(data.selectedRide.rideId)} style={{ background: '#ff9a00', color: '#000', marginLeft: '10px' }}>
+            Yes
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
+      <Modal show={data.showFinishedConfirmation} onHide={() => setData({ ...data, showFinishedConfirmation: false })} centered>
+        <Modal.Header closeButton style={{ background: '#ff9a00', color: '#000' }}>
+          <Modal.Title>Confirm Finish Ride</Modal.Title>
+        </Modal.Header>
+        {data.selectedFinsihedRide && (
+          <Modal.Body className="centered-body">
+            <div className="mt-2 bordered-paragraph rounded">
+              <span style={{ color: '#9F390D', fontWeight: 'bold' }}>From: {data.selectedFinsihedRide.pickupLocation} </span>
+            </div>
+            <div className="mt-2 bordered-paragraph rounded">
+              <span style={{ color: '#9F390D', fontWeight: 'bold' }}>To: {data.selectedFinsihedRide.dropLocation} </span>
+            </div>
+            <p className='fw-bold pt-4'>Did you finish this Ride?</p>
+          </Modal.Body>
+        )}
+        <Modal.Footer>
+          <Button className='btn-effect2' onClick={() => setData({ ...data, showFinishedConfirmation: false })} style={{ background: '#ff9a00', color: '#000' }}>
+            No
+          </Button>
+          <Button className='btn-effect' onClick={() => handleFinishRide(data.selectedFinsihedRide.rideId)} style={{ background: '#ff9a00', color: '#000', marginLeft: '10px' }}>
             Yes
           </Button>
         </Modal.Footer>

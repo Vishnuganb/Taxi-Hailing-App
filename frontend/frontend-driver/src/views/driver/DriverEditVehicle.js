@@ -6,6 +6,8 @@ import validator from "validator";
 import { set } from "lodash";
 import axios from 'axios';
 import vehiclesData from './vehicles.json';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const serverLink = 'http://localhost:8002';
 
@@ -106,13 +108,16 @@ const DriverEditVehicle = (props) => {
                 (response) => {
 
                     // window.location.reload();
+                    toast.success('Vehicle details updated successfully!', { position: toast.POSITION.TOP_RIGHT });
                     console.log(response.data);
 
                 }
 
             ).catch(
 
-                () => { alert("Error!!!") }
+                () => { 
+                    toast.error('Error updating vehicle details!', { position: toast.POSITION.TOP_RIGHT });
+                }
 
             )
 

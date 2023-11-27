@@ -8,6 +8,8 @@ import { set } from "lodash";
 import axios from 'axios';
 import bcrypt from 'bcryptjs';
 import { Alert } from 'react-bootstrap';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const serverLink = 'http://localhost:8001';
 
@@ -160,14 +162,17 @@ const PassengerEditProfile = (props) => {
 
                 (response) => {
 
-                    window.location.reload();
+                    // window.location.reload();
+                    toast.success('Passenger details updated successfully!', { position: toast.POSITION.TOP_RIGHT });
                     console.log(response.data);
 
                 }
 
             ).catch(
 
-                () => { alert("Error!!!") }
+                () => { 
+                    toast.error('Error updating passenger details!', { position: toast.POSITION.TOP_RIGHT }); 
+                }
 
             )
 

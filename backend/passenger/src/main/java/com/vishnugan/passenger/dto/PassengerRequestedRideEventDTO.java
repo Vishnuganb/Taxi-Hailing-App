@@ -13,5 +13,6 @@ public class PassengerRequestedRideEventDTO {
     private String dropLocation;
     private String vehicleType;
     private Long passengerId;
+    private String status;
 
 }

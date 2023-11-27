@@ -1,10 +1,10 @@
 package com.vishnugan.driver.service;
 
+import com.vishnugan.driver.dto.PassengerRequestedRideEventWithIdDTO;
 import com.vishnugan.driver.entity.Ride;
-import com.vishnugan.driver.message.MessageRequest;
 import com.vishnugan.driver.repo.RideRepository;
+import com.vishnugan.driver.repo.VehicleRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,35 +13,34 @@ import java.util.List;
 @RequiredArgsConstructor
 public class RideService {
 
-    private final KafkaTemplate<String, String> kafkaTemplate;
+    private final VehicleRepository vehicleRepository;
     private final RideRepository rideRepository;
 
-    public void updateRideAcceptStatus(Long rideId) {
-        String message = "Ride with ID " + rideId + " accepted";
-        kafkaTemplate.send("passenger-accepted-ride", message);
-        // Update the ride status in the database
-        updateRideStatus(rideId, "accepted");
+    public List<PassengerRequestedRideEventWithIdDTO> getAllRideDetails(Long driverId) {
+        // Retrieve the driver's vehicle type from the repository
+        String driverVehicleType = vehicleRepository.findVehicleTypeByDriverId(driverId);
+        System.out.println(driverVehicleType);
+
+        // Filter the ride details list based on the driver's vehicle type
+        List<PassengerRequestedRideEventWithIdDTO> filteredRideDetails = rideRepository.findAllByVehicleType(driverVehicleType);
+        System.out.println(filteredRideDetails);
+
+        System.out.println(filteredRideDetails);
+
+        return filteredRideDetails;
+    }
+
+    public void updateRideAcceptStatus(Long rideId, Long driverId) {
+        Ride ride = (Ride) rideRepository.findByRideId(rideId).orElseThrow();
+        ride.setDriverId(driverId);
+        ride.setStatus("accepted");
+        rideRepository.save(ride);
+
     }
 
     public void updateRideFinishStatus(Long rideId) {
-        String message = "Ride with ID " + rideId + " finished";
-        kafkaTemplate.send("passenger-finished-ride", message);
-
-        // Update the ride status in the database
-        updateRideStatus(rideId, "finished");
-
-    }
-
-    public void updateRideStatus(Long rideId, String newStatus) {
-        rideRepository.findById(rideId)
-                .ifPresent(ride -> {
-                    ride.setStatus(newStatus);
-                    rideRepository.save(ride);
-                });
-
-    }
-
-    public List<Ride> getAllRideDetails() {
-        return rideRepository.findAll();
+            Ride ride = (Ride) rideRepository.findByRideId(rideId).orElseThrow();
+            ride.setStatus("finished");
+            rideRepository.save(ride);
     }
 }

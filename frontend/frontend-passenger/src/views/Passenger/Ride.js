@@ -4,6 +4,10 @@ import { useNavigate } from "react-router-dom";
 import PlacesAutocomplete from "react-places-autocomplete";
 import vehiclesData from "./vehicles.json";
 import "./../../styles/Ride.css";
+import {MapContainer, TileLayer, Marker, Popup} from 'react-leaflet'
+import "leaflet/dist/leaflet.css";
+import Routing from "./Routing";
+import { GoogleMap, LoadScript, DirectionsService, DirectionsRenderer } from '@react-google-maps/api';
 
 import {
   CForm,
@@ -22,7 +26,18 @@ import rideService from "../../services/rideService";
 function Ride() {
   // For the server side requests and responses
   const [loading, setLoading] = useState(false);
+  const [showMapPopup, setShowMapPopup] = useState(false);
   let navigate = useNavigate();
+
+  const containerStyle = {
+    width: '600px',
+    height: '500px',
+  };
+  
+  const center = {
+    lat: 16.902,
+    lng: 79.859,
+  };
 
   const response = sessionStorage.getItem('userid');
   const userData = JSON.parse(response);
@@ -64,8 +79,7 @@ function Ride() {
       return placeIds && isSriLankaAddress;
     });
   };
-   
-  
+
   const handleSubmit = async (e) => {
     e.preventDefault();
   
@@ -106,10 +120,19 @@ function Ride() {
   
       rideService.findDriver(payload).then(
         (res) => {
-          console.log("Response", res);
           if (res.type === "OK") {
+
             toast.success(res.message);
-            navigate('/passenger');
+            setShowMapPopup(true);
+
+            console.log(rideForm.from);
+
+            // setRideForm({
+            //   from: "",
+            //   to: "",
+            //   vehicleType: "",
+            // });
+
           } else if (res.type === "BAD") {
             toast.error(res.message);
           }
@@ -271,6 +294,14 @@ function Ride() {
           </CCardBody>
         </CCard>
       </CCol>
+
+      {showMapPopup && rideForm.from && rideForm.to && (
+        <div className="mt-5 border" style={{ height: '500px', width: '600px' }}>
+
+            <Routing from={rideForm.from} to={rideForm.to} />
+
+        </div>
+      )}
     </div>
   );
 }

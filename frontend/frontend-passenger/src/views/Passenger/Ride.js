@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import image from "../../assets/images/SignIn.jpeg";
 import { useNavigate } from "react-router-dom";
-import PlacesAutocomplete from "react-places-autocomplete";
 import vehiclesData from "./vehicles.json";
 import "./../../styles/Ride.css";
 import {MapContainer, TileLayer, Marker, Popup} from 'react-leaflet'
@@ -47,7 +46,22 @@ function Ride() {
     from: "",
     to: "",
     vehicleType: "",
+    fromLat: "",
+    fromLon: "",
+    toLat: "",
+    toLon: "",
   });
+
+  const [fromSearch, setFromSearch] = useState("");
+  const [toSearch, setToSearch] = useState("");
+
+  const handleFromSearch = (event) => {
+    setFromSearch(event.target.value);
+  };
+
+  const handleToSearch = (event) => {
+    setToSearch(event.target.value);
+  };
 
   // Update the form data while input
   const onUpdateInput = (e) => {
@@ -78,6 +92,48 @@ function Ride() {
   
       return placeIds && isSriLankaAddress;
     });
+  };
+
+  const handleLocationSearch = async (searchText, locationType) => {
+    if (!searchText) {
+      return; // No search text provided, exit
+    }
+  
+    try {
+      const response = await fetch(
+        `https://nominatim.openstreetmap.org/search?q=${searchText}&format=json&limit=1`
+      );
+      const data = await response.json();
+  
+      if (data.length === 0) {
+        console.warn(`No results found for "${searchText}" as ${locationType}`);
+        return; // No search results found
+      }
+  
+      const { lat, lon, display_name } = data[0];
+  
+      if (locationType === "from") {
+        setFromSearch(display_name); // Update UI with address
+        setRideForm((prev) => ({
+          ...prev,
+          from: display_name,
+          fromLat: lat,
+          fromLon: lon,
+        }));
+      } else {
+        setToSearch(display_name);
+        // Update state with coordinates
+        setRideForm((prev) => ({
+          ...prev,
+          to: display_name,
+          toLat: lat,
+          toLon: lon,
+        }));
+      }
+    } catch (error) {
+      console.error("Error during location search:", error);
+      toast.error("An error occurred while searching for location.");
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -114,6 +170,10 @@ function Ride() {
       const payload = {
         pickupLocation: rideForm.from,
         dropLocation: rideForm.to,
+        fromLat: rideForm.fromLat,
+        fromLon: rideForm.fromLon,
+        toLat: rideForm.toLat,
+        toLon: rideForm.toLon,
         vehicleType: rideForm.vehicleType,
         passengerId: userData
       };
@@ -126,12 +186,6 @@ function Ride() {
             setShowMapPopup(true);
 
             console.log(rideForm.from);
-
-            // setRideForm({
-            //   from: "",
-            //   to: "",
-            //   vehicleType: "",
-            // });
 
           } else if (res.type === "BAD") {
             toast.error(res.message);
@@ -183,100 +237,50 @@ function Ride() {
             </p>
             <CForm className="row g-3">
             <CCol md={12}>
-              <PlacesAutocomplete
-                value={rideForm.from}
-                onChange={(value) => onUpdateInput({ target: { name: "from", value } })}
-                onSelect={(address) => handleSelect(address, "from")}
-              >
-              {({ getInputProps, suggestions, getSuggestionItemProps, loading }) => (
-                <div className="autocomplete-container">
-                  <CFormInput
-                    type="text"
-                    id="validationServer01"
-                    name="from"
-                    label="Pickup Location"
-                    {...getInputProps({
-                      placeholder: "Enter Pickup Location",
-                    })}
-                    feedback={rideFormErrors.fromError}
-                    invalid={rideFormErrors.fromError ? true : false}
-                  />
-                <div className="suggestions-container">
-                    {loading && <div>Loading...</div>}
-                    {filterSuggestions(suggestions).map((suggestion) => (
-                      <div
-                        {...getSuggestionItemProps(suggestion)}
-                        key={suggestion.placeId}
-                        className="suggestion-item"
-                      >
-                        {suggestion.description}
-                      </div>
-                    ))}
-                </div>
-              </div>
-            )}
-          </PlacesAutocomplete>
-        </CCol>
+              <CFormInput
+                type="text"
+                id="validationServer01"
+                name="from"
+                label="Pickup Location"
+                placeholder="Enter Pickup Location"
+                value={fromSearch}
+                onChange={handleFromSearch}
+                onBlur={() => handleLocationSearch(fromSearch, "from")}
+              />
+            </CCol>
 
-              <CCol md={12}>
-                <div style={{ position: "relative" }}>
-                  <PlacesAutocomplete
-                    value={rideForm.to}
-                    onChange={(value) =>
-                      onUpdateInput({ target: { name: "to", value } })
-                    }
-                    onSelect={(address) => handleSelect(address, "to")}
-                  >
-                    {({ getInputProps, suggestions, getSuggestionItemProps, loading }) => (
-                      <div className="autocomplete-container">
-                        <CFormInput
-                          type={"text"}
-                          id="validationServer02"
-                          name="to"
-                          label="Drop Location"
-                          {...getInputProps({
-                            placeholder: "Enter Drop Location",
-                          })}
-                          feedback={rideFormErrors.toError}
-                          invalid={rideFormErrors.toError ? true : false}
-                        />
-                        <div className="suggestions-container">
-                          {loading && <div>Loading...</div>}
-                          {filterSuggestions(suggestions).map((suggestion) => (
-                            <div
-                              {...getSuggestionItemProps(suggestion)}
-                              key={suggestion.placeId}
-                              className="suggestion-item"
-                            >
-                              {suggestion.description}
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                  </PlacesAutocomplete>
-                </div>
-              </CCol>
+            <CCol md={12}>
+              <CFormInput
+                  type={"text"}
+                  id="validationServer02"
+                  name="to"
+                  label="Drop Location"
+                  placeholder= "Enter Drop Location"
+                  value={toSearch}
+                  onChange={handleToSearch}
+                  onBlur={() => handleLocationSearch(toSearch, "to")}
+                />
+            </CCol>
 
-              <CCol md={12} className="my-3">
-                <div style={{ position: "relative" }}>
-                  <CFormSelect
-                    label="Vehicle Type"
-                    name="vehicleType"
-                    onChange={onUpdateInput}
-                    value={rideForm.vehicleType}
-                    feedback={rideFormErrors.vehicleTypeError}
-                    invalid={rideFormErrors.vehicleTypeError ? true : false}
-                  >
-                    <option value="">Select Vehicle Type</option>
+            <CCol md={12} className="my-3">
+              <div style={{ position: "relative" }}>
+                <CFormSelect
+                  label="Vehicle Type"
+                  name="vehicleType"
+                  onChange={onUpdateInput}
+                  value={rideForm.vehicleType}
+                  feedback={rideFormErrors.vehicleTypeError}
+                  invalid={rideFormErrors.vehicleTypeError ? true : false}
+                >
+                  <option value="">Select Vehicle Type</option>
                     {vehiclesData.map((vehicle) => (
                       <option key={vehicle.id} value={vehicle.name}>
                         {vehicle.name}
                       </option>
-                    ))}
-                  </CFormSelect>
-                </div>
-              </CCol>
+                  ))}
+                </CFormSelect>
+              </div>
+            </CCol>
 
               <div className="d-grid">
                 <CButton
@@ -297,9 +301,7 @@ function Ride() {
 
       {showMapPopup && rideForm.from && rideForm.to && (
         <div className="mt-5 border" style={{ height: '500px', width: '600px' }}>
-
-            <Routing from={rideForm.from} to={rideForm.to} />
-
+          <Routing fromLat={rideForm.fromLat} fromLon={rideForm.fromLon} toLat={rideForm.toLat} toLon={rideForm.toLon}/>
         </div>
       )}
     </div>

@@ -1,65 +1,48 @@
-import { useEffect, useState } from 'react';
-import { GoogleMap, LoadScript, DirectionsService } from '@react-google-maps/api';
-import { useJsApiLoader } from '@react-google-maps/api';
+import React from "react";
+import { MapContainer, TileLayer, Marker, Popup, Polyline } from "react-leaflet";
+import "leaflet/dist/leaflet.css";
+import markerIcon from "./../../assets/images/locationPin.png";
+import L from 'leaflet';
+import "leaflet/dist/leaflet.css";
 
-const containerStyle = {
-  width: '100%',
-  height: '100%',
-};
+function Routing({ fromLat, fromLon, toLat, toLon }) {
+  // Consider using a routing API like Google Maps Directions API or Mapbox Directions API
+  // for more accurate routing information.
+  const route = [
+    [fromLat || 16.902, fromLon || 79.859], // Default center
+    [toLat || 16.902, toLon || 79.859], // Default center (replace with actual destination)
+  ];
 
-const center = {
-  lat: 16.902,
-  lng: 79.859,
-};
+  const mapCenter = [fromLat || 16.902, fromLon || 79.859];
 
-export default function Routing(props) {
+  const startMarker = { lat: fromLat, lng: fromLon }; // Consider user input or map click
+  const endMarker = { lat: toLat, lng: toLon };   // Consider user input or map click
 
-    const { isLoaded } = useJsApiLoader({
-        googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY,
-        });
+  const customIcon = L.icon({
+    iconUrl: markerIcon,
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+  });
+
+  return (
+    <MapContainer center={mapCenter} zoom={13} style={{ height: "100%" }}>
+      <TileLayer
+        attribution='<a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        url={`https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png`}
+      />
+      <Marker position={startMarker} icon={customIcon}>
+        <Popup>Pickup Location</Popup>
+      </Marker>
+      <Marker position={endMarker} icon={customIcon}>
+        <Popup>Drop Location</Popup>
+      </Marker>
+      {/* Consider adding error handling if fromLat, fromLon, toLat, or toLon are invalid */}
+      <Polyline positions={route} color="blue" />
+    </MapContainer>
+  );
+}
+
+export default Routing;
 
 
-    const [response, setResponse] = useState(null);
-    const [error, setError] = useState(null);
-  
-    useEffect(() => {
-      const { from, to } = props;
-  
-      if (from && to) {
-        const directionsService = new window.google.maps.DirectionsService();
-        directionsService.route(
-          {
-            origin: from,
-            destination: to,
-            travelMode: 'DRIVING',
-          },
-          (result, status) => {
-            if (status === 'OK') {
-              setResponse(result);
-            } else {
-              console.error(`Error fetching directions: ${status}`);
-              setError(`Error fetching directions: ${status}`);
-            }
-          }
-        );
-      }
-    }, [props]);
-  
-    return (
-      <div>
-        {error ? (
-          <div>{error}</div>
-        ) : (
-          <GoogleMap mapContainerStyle={containerStyle} center={center} zoom={14}>
-            {response && (
-              <DirectionsService
-                options={{
-                  directions: response,
-                }}
-              />
-            )}
-          </GoogleMap>
-        )}
-      </div>
-    );
-  }

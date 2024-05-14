@@ -253,21 +253,12 @@ function DriverRegister() {
     
 
     return (
-        <div className=" bg-light d-flex flex-row align-items-center h-100"
+        <div className=" bg-light d-flex align-items-center justify-content-center"
         style={{
             backgroundImage: `url(${image})`,
             backgroundSize: "cover",
-            backgroundPosition: "center", // Center the image
-            backgroundRepeat: "no-repeat",
-            width: "100%",
-            height: "100vh",
-            display: "flex",
-            overflow: "hidden",
-            overflowY: "hidden",
-            scrollbarWidth: "0",
-            msOverflowStyle: "none",
-            alignItems: "center", // Center vertically
-            justifyContent: "center", // Center horizontally
+            backgroundPosition: "center",
+            height: "90vh",
         }}>
             <CCol md={5}>
                 <CCard className="m-5" style={{ backgroundColor: "rgba(255, 255, 255, 0.89)" }}>

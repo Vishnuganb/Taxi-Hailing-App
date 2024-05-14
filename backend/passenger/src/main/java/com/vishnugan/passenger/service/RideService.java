@@ -39,6 +39,10 @@ public class RideService {
         ride.setPickupLocation(rideRequest.getPickupLocation());
         ride.setDropLocation(rideRequest.getDropLocation());
         ride.setVehicleType(rideRequest.getVehicleType());
+        ride.setFromLat ( rideRequest.getFromLat() );
+        ride.setFromLon ( rideRequest.getFromLon() );
+        ride.setToLat ( rideRequest.getToLat() );
+        ride.setToLon ( rideRequest.getToLon() );
         ride.setStatus("pending");
 
         rideKafkaProducer.sendPassengerRequestedRideEvent(rideRequest);

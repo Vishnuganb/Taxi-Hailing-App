@@ -22,6 +22,10 @@ public class Ride {
     private Long rideId;
     private String pickupLocation;
     private String dropLocation;
+    private Double fromLat;
+    private Double fromLon;
+    private Double toLat;
+    private Double toLon;
     private String vehicleType;
     private Long passengerId;
     private String status;

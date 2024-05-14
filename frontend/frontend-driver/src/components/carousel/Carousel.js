@@ -21,8 +21,8 @@ function Carousel(props) {
             className="d-block rounded-5 align-items-center justify-content-center"
             src={item.img}
             alt={item.id}
-            height={400}
-            width={800}
+            height="100vh"
+            width="auto"
             style={{ margin: "auto" }}
           />
         </CCarouselItem>
